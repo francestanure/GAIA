@@ -13,21 +13,21 @@
     </style>
 </head>
 <body>
-    <h2>Olá! Faça a sua pergunta!</h2>
+    <h2>Suba o arquivo e faça a sua pergunta</h2>
     
     <form action="https://n8n-service-to7f.onrender.com/webhook/eda-agent" method="POST" enctype="multipart/form-data">
 
-        <label for="file">1. Se fora a 1a pergunta, selecione o Arquivo ZIP</label>
+        <label for="file">1. Selecionar Arquivo CSV/ZIP (Campo 'file')</label>
         <input type="file" id="file" name="file" required>
-        <div class="hint"></div>
+        <div class="hint">Faça upload de um arquivo .zip".</div>
 
-        <label for="question">2. O que você quer saber? </label>
+        <label for="question">2. Pergunta (Campo 'question')</label>
         <textarea id="question" name="question" rows="3" required>Quais são as medidas de tendência central da coluna Amount?</textarea>
         <div class="hint"></div>
         
         <label for="session_id">3. ID da Sessão (Campo 'session_id') - Opcional</label>
         <input type="text" id="session_id" name="session_id" placeholder="Deixe em branco para nova sessão">
-        <div class="hint">Deixe em branco caso haja um upload. Um novo ID será criado se este campo estiver vazio, caso contrário, o session_id garantirá a mémória.</div>
+        <div class="hint">Deixe em branco caso haja um upload. Um novo ID será criado se este campo estiver vazio, caso contrário, garantirá a mémória.</div>
 
         <input type="submit" value="Enviar para o Agente N8N">
     </form>

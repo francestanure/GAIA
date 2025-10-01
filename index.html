@@ -13,19 +13,19 @@
     </style>
 </head>
 <body>
-    <h2>Suba o arquivo e faça a sua pergunta</h2>
+    <h2>Olá! Somos da Gaia. O que você quer saber hoje?</h2>
     
-    <form action="https://n8n-service-to7f.onrender.com/webhook/eda-agent" method="POST" enctype="multipart/form-data">
+    <form action="https://n8n-service-to7f.onrender.com/webhook-test/eda-agent" method="POST" enctype="multipart/form-data">
 
-        <label for="file">1. Selecionar Arquivo CSV/ZIP (Campo 'file')</label>
+        <label for="file">1. Selecionar Arquivo ZIP</label>
         <input type="file" id="file" name="file" required>
         <div class="hint">Faça upload de um arquivo .zip".</div>
 
-        <label for="question">2. Pergunta (Campo 'question')</label>
+        <label for="question">2. Pergunta</label>
         <textarea id="question" name="question" rows="3" required>Quais são as medidas de tendência central da coluna Amount?</textarea>
         <div class="hint"></div>
         
-        <label for="session_id">3. ID da Sessão (Campo 'session_id') - Opcional</label>
+        <label for="session_id">3. ID da Sessão - Opcional</label>
         <input type="text" id="session_id" name="session_id" placeholder="Deixe em branco para nova sessão">
         <div class="hint">Deixe em branco caso haja um upload. Um novo ID será criado se este campo estiver vazio, caso contrário, garantirá a mémória.</div>
 

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste Webhook EDA</title>
+</head>
+<body>
+  <h2>Enviar pergunta para o Agente EDA</h2>
+  <form action="https://SEU_N8N_URL/webhook/eda-agent" method="post" enctype="multipart/form-data">
+    <label>Session ID:</label><br>
+    <input type="text" name="session_id" value="teste123"><br><br>
+    
+    <label>Pergunta:</label><br>
+    <input type="text" name="question" value="Qual a média da coluna Amount?"><br><br>
+    
+    <label>CSV URL (opcional):</label><br>
+    <input type="text" name="csv_url" value=""><br><br>
+    
+    <label>Upload de arquivo CSV (opcional):</label><br>
+    <input type="file" name="file"><br><br>
+    
+    <button type="submit">Enviar</button>
+  </form>
+</body>
+</html>

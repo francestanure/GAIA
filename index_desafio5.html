@@ -2,24 +2,84 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Teste Webhook EDA</title>
+  <title>GAIA - Agentes EDA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #2E7D68;
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px 40px;
+      border-radius: 15px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 14px;
+      margin-bottom: 8px;
+      display: block;
+      font-weight: 500;
+    }
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    input[type="text"] {
+      background: #fff;
+      color: #333;
+    }
+    input[type="file"] {
+      background: #f0f0f0;
+      color: #333;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #ffffff;
+      color: #2E7D68;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #e0e0e0;
+    }
+  </style>
 </head>
 <body>
-  <h2>Enviar pergunta para o Agente EDA</h2>
-  <form action="https://n8n-service-to7f.onrender.com/webhook-test/eda" method="post" enctype="multipart/form-data">
-    <label>Session ID:</label><br>
-    <input type="text" name="session_id" value="teste123"><br><br>
-    
-    <label>Pergunta:</label><br>
-    <input type="text" name="question" value="Qual a média da coluna Amount?"><br><br>
-    
-    <label>CSV URL (opcional):</label><br>
-    <input type="text" name="csv_url" value=""><br><br>
-    
-    <label>Upload de arquivo CSV (opcional):</label><br>
-    <input type="file" name="file"><br><br>
-    
-    <button type="submit">Enviar</button>
-  </form>
+  <div class="container">
+    <h2>Enviar pergunta para o Agente EDA</h2>
+    <form action="https://n8n-service-to7f.onrender.com/webhook-test/eda" method="post" enctype="multipart/form-data">
+      <label>Olá! O que você quer saber sobre este dataset?:</label>
+      <input type="text" name="question" value="Qual a média da coluna Amount?">
+      
+      <label>Para análise de novos datasets, suba um novo CSV</label>
+      <input type="file" name="file">
+      
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
 </body>
 </html>

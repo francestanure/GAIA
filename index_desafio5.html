@@ -11,7 +11,7 @@
       color: #2E7D68;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start; /* sobe o container */
       height: 100vh;
       margin: 0;
     }
@@ -22,6 +22,7 @@
       max-width: 450px;
       width: 100%;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-top: 2cm; /* distância do topo */
     }
     h2 {
       text-align: center;
@@ -71,7 +72,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>GAIA - Agentes EDA</h2>
+    <h2>Enviar pergunta para o Agente EDA</h2>
     <form action="https://n8n-service-to7f.onrender.com/webhook-test/eda" method="post" enctype="multipart/form-data">
       <label>Olá! O que você quer saber sobre este dataset?:</label>
       <input type="text" name="question" value="Qual a média da coluna Amount?">
@@ -79,4 +80,8 @@
       <label>Para análise de novos datasets, suba um novo CSV</label>
       <input type="file" name="file">
       
-      <button type="submit">Enviar
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+</body>
+</html>

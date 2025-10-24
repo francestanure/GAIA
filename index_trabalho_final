@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <title>GAIA - Relatórios Gerenciais</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      color: #2E7D68;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* sobe o container */
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: rgba(46, 125, 104, 0.05);
+      padding: 30px 40px;
+      border-radius: 15px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-top: 2cm; /* distância do topo */
+    }
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #2E7D68;
+      text-transform: lowercase;
+    }
+    label {
+      font-size: 14px;
+      margin-bottom: 8px;
+      display: block;
+      font-weight: 500;
+    }
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: 1px solid #2E7D68;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #2E7D68;
+      background: #fff;
+      box-sizing: border-box;
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: #2E7D68;
+      opacity: 0.6;
+    }
+    small {
+      display: block;
+      margin-top: -12px;
+      margin-bottom: 16px;
+      color: #2E7D68;
+      opacity: 0.8;
+      font-size: 12px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2E7D68;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background-color: #256653; }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>gaia - Relatórios Gerenciais</h2>
+    <form action="https://n8n-service-to7f.onrender.com/webhook-test/8339df5f-ae5d-4dca-bdd0-630901a51ba6" method="post" target="_blank">
+      <!-- Campo 1: Pergunta em linguagem natural -->
+      <label>Olá! O que você quer saber sobre seus dados fiscais?</label>
+      <textarea name="pergunta" rows="3" placeholder="Ex.: Como foi a receita por produto no último trimestre?"></textarea>
+
+      <!-- Campo 2: UF (Todos ou um específico) -->
+      <div class="row">
+        <div>
+          <label>UF (ou Todos)</label>
+          <select name="uf">
+            <option value="ALL" selected>Todos os estados</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+
+        <!-- Campo 3: Janela de período -->
+        <div>
+          <label>Janela de período</label>
+          <select name="periodo">
+            <option value="7d">Últimos 7 dias</option>
+            <option value="30d">Últimos 30 dias</option>
+            <option value="MTD">MTD (mês até hoje)</option>
+            <option value="QTD">QTD (trimestre até hoje)</option>
+            <option value="YTD" selected>YTD (ano até hoje)</option>
+            <option value="12m">Últimos 12 meses</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Campo 4: Data fim -->
+      <label>Data fim</label>
+      <input type="date" name="data_fim" />
+      <small>Dica: deixe em branco para “hoje”. Para janelas personalizadas, descreva na pergunta (ex.: “últimos 2 meses”).</small>
+
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+</body>
+</html>

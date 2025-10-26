@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <title>GAIA - Relatórios Gerenciais</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body { 
+    body {
       background-color: #ffffff;
       font-family: 'Poppins', sans-serif;
       color: #2E7D68;
       display: flex;
       justify-content: center;
-      align-items: flex-start; /* sobe o container */
+      align-items: flex-start;
       height: 100vh;
       margin: 0;
     }
@@ -19,17 +19,17 @@
       background: rgba(46, 125, 104, 0.05);
       padding: 30px 40px;
       border-radius: 15px;
-      max-width: 520px;
+      max-width: 540px;
       width: 100%;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      margin-top: 2cm; /* distância do topo */
+      margin-top: 2.5rem;
     }
     h2 {
       text-align: center;
       font-weight: 600;
       margin-bottom: 20px;
       color: #2E7D68;
-      text-transform: lowercase;
+      text-transform: none;
     }
     label {
       font-size: 14px;
@@ -39,31 +39,17 @@
     }
     input[type="text"],
     input[type="date"],
-    select,
-    textarea {
+    select {
       width: 100%;
       padding: 10px 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       border: 1px solid #2E7D68;
       border-radius: 8px;
       font-size: 14px;
       color: #2E7D68;
       background: #fff;
-      box-sizing: border-box;
     }
-    input::placeholder,
-    textarea::placeholder {
-      color: #2E7D68;
-      opacity: 0.6;
-    }
-    small {
-      display: block;
-      margin-top: -12px;
-      margin-bottom: 16px;
-      color: #2E7D68;
-      opacity: 0.8;
-      font-size: 12px;
-    }
+    input::placeholder { color: #2E7D68; opacity: 0.6; }
     button {
       width: 100%;
       padding: 12px;
@@ -77,59 +63,47 @@
       transition: 0.3s;
     }
     button:hover { background-color: #256653; }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+    .hint { font-size: 12px; opacity: .8; margin-top: -10px; margin-bottom: 16px; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>gaia - Relatórios Gerenciais</h2>
-    <form action="https://n8n-service-to7f.onrender.com/webhook-test/8339df5f-ae5d-4dca-bdd0-630901a51ba6" method="post" target="_blank">
-      <!-- Campo 1: Pergunta em linguagem natural -->
-      <label>Olá! O que você quer saber sobre seus dados fiscais?</label>
-      <textarea name="pergunta" rows="3" placeholder="Ex.: Como foi a receita por produto no último trimestre?"></textarea>
+    <form action="https://n8n-service-to7f.onrender.com/webhook-test/12a2_final" method="post">
+      <label>Pergunta (ex.: “qual a soma total de 2024?” ou “receita por CFOP”)</label>
+      <input type="text" name="pergunta" placeholder="Ex.: soma total de todas as notas" />
 
-      <!-- Campo 2: UF (Todos ou um específico) -->
-      <div class="row">
-        <div>
-          <label>UF (ou Todos)</label>
-          <select name="uf">
-            <option value="ALL" selected>Todos os estados</option>
-            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
-            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
-            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
-            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
-            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
-            <option>SP</option><option>SE</option><option>TO</option>
-          </select>
-        </div>
+      <label>UF</label>
+      <select name="uf">
+        <option value="ALL" selected>Todos os estados</option>
+        <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+        <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+        <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+        <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+        <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+        <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+        <option>SP</option><option>SE</option><option>TO</option>
+      </select>
 
-        <!-- Campo 3: Janela de período -->
-        <div>
-          <label>Janela de período</label>
-          <select name="periodo">
-            <option value="7d">Últimos 7 dias</option>
-            <option value="30d">Últimos 30 dias</option>
-            <option value="MTD">MTD (mês até hoje)</option>
-            <option value="QTD">QTD (trimestre até hoje)</option>
-            <option value="YTD" selected>YTD (ano até hoje)</option>
-            <option value="12m">Últimos 12 meses</option>
-            <option value="custom">Personalizado</option>
-          </select>
-        </div>
-      </div>
+      <label>Data início</label>
+      <input type="date" name="data_inicio" id="data_inicio">
 
-      <!-- Campo 4: Data fim -->
       <label>Data fim</label>
-      <input type="date" name="data_fim" />
-      <small>Dica: deixe em branco para “hoje”. Para janelas personalizadas, descreva na pergunta (ex.: “últimos 2 meses”).</small>
+      <input type="date" name="data_fim" id="data_fim">
+      <div class="hint">Se deixar em branco, usaremos defaults (hoje/YTD). Recomendado preencher para 2024.</div>
 
-      <button type="submit">Enviar</button>
+      <button type="submit">Gerar Relatório</button>
     </form>
   </div>
+
+  <script>
+    // Define padrão prático: se você só importou 2024, já preenche 2024-01-01 a 2024-12-31
+    (function(){
+      const di = document.getElementById('data_inicio');
+      const df = document.getElementById('data_fim');
+      if (!di.value) di.value = '2024-01-01';
+      if (!df.value) df.value = '2024-12-31';
+    })();
+  </script>
 </body>
 </html>

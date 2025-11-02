@@ -66,16 +66,17 @@
     .hint { font-size: 12px; opacity: .8; margin-top: -10px; margin-bottom: 16px; }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h2>gaia - Relatórios Gerenciais</h2>
-    <form action="https://n8n-service-to7f.onrender.com/webhook-test/trabalho_final" method="post">
-      <label>Pergunta (ex.: “qual a soma total de 2024?” ou “receita por CFOP”)</label>
-      <input type="text" name="pergunta" placeholder="Ex.: soma total de todas as notas" />
+<form method="POST" action="https://n8n-service-to7f.onrender.com/webhook/12a2_final" class="section">
+  <div class="row">
+    <div class="col">
+      <label>Pergunta</label>
+      <input type="text" name="pergunta" placeholder="Ex.: receita mensal, top 10 fornecedores" value="">
+    </div>
 
+    <div class="col-narrow">
       <label>UF</label>
       <select name="uf">
-        <option value="ALL" selected>Todos os estados</option>
+        <option value="ALL" selected>ALL</option>
         <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
         <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
         <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
@@ -84,16 +85,41 @@
         <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
         <option>SP</option><option>SE</option><option>TO</option>
       </select>
+    </div>
 
-      <label>Data início</label>
-      <input type="date" name="data_inicio" id="data_inicio">
+    <div class="col-narrow">
+      <label>Data início (YYYY-MM-DD)</label>
+      <input type="text" name="data_inicio" placeholder="YYYY-MM-DD">
+    </div>
+    <div class="col-narrow">
+      <label>Data fim (YYYY-MM-DD)</label>
+      <input type="text" name="data_fim" placeholder="YYYY-MM-DD">
+    </div>
 
-      <label>Data fim</label>
-      <input type="date" name="data_fim" id="data_fim">
-      <div class="hint">Se deixar em branco, usaremos defaults (hoje/YTD). Recomendado preencher para 2024.</div>
+    <!-- ⚡️ Toggle de análise preditiva -->
+    <div class="col-narrow">
+      <label>Análise preditiva?</label>
+      <select name="predict">
+        <option value="NAO" selected>Não</option>
+        <option value="SIM">Sim</option>
+      </select>
+    </div>
 
-      <button type="submit">Gerar Relatório</button>
-    </form>
+    <!-- Parâmetros quando preditivo = SIM -->
+    <div class="col-narrow">
+      <label>Horizonte (meses)</label>
+      <input type="number" name="forecast_h" min="1" max="12" value="3">
+    </div>
+    <div class="col-narrow">
+      <label>Cenário (%)</label>
+      <input type="number" name="scenario_pct" step="1" value="0">
+    </div>
+
+    <div class="col-narrow">
+      <button type="submit">Executar</button>
+    </div>
+  </div>
+</form>
   </div>
 
   <script>

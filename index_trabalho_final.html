@@ -1,85 +1,10 @@
-/**
- * HTML Renderer — GAIA EDA (com box verde clarinho + predição)
- * - Mantém o container com fundo verde suave (#2E7D68 @ 5%)
- * - Formulário SEMPRE no topo (com toggle de predição)
- * - Plota line/bar/pie/scatter via Chart.js
- * - Reusa valores do Normalize Inputs para pré-preencher o form
- */
-
-const k = $prevNode["KPIs & Série/Scatter"]?.json || {};
-const viz     = k.viz || 'time_series';
-const label   = k.label || 'Relatório';
-const kpi     = k.kpi || { total:0, itens:0, notas:0, ticket:0, total_liq:0, tem_liq:false };
-const series  = k.series || { labels:[], data:[] };
-const pie     = k.pie    || series;
-const scatter = k.scatter|| { xKey:'receita', yKey:'qtd', points:[], rho:null };
-const table   = k.table  || [];
-const context = k.context || {}; // { start, end, uf_scope, uf_value }
-
-// Valores do último input — para pré-preencher o formulário
-const ni = $prevNode["Normalize Inputs"]?.json || {};
-const perguntaUsed    = ni.pergunta || '';
-const ufUsed          = (ni.uf || 'ALL').toUpperCase();
-const dataInicioUsed  = ni.data_inicio || '';
-const dataFimUsed     = ni.data_fim || '';
-const isPredictUsed   = !!ni.is_predict;
-const forecastHUsed   = Number.isFinite(ni.forecast_h) ? ni.forecast_h : 3;
-const scenarioPctUsed = Number.isFinite(ni.scenario_pct) ? ni.scenario_pct : 0;
-
-const insight = (typeof $json?.text === 'string')
-  ? $json.text
-  : (typeof $json === 'string' ? $json : '(sem insight)');
-
-function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }
-function fmtBRL(n){ try { return Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); } catch { return `${n}`; } }
-function fmtISO(s){ return (s||'').toString().slice(0,10); }
-
-// UF options
-const UF_LIST = ['ALL','AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
-const ufOptions = UF_LIST.map(uf => {
-  const selected = uf === ufUsed ? 'selected' : '';
-  return `<option value="${uf}" ${selected}>${uf}</option>`;
-}).join('');
-
-// Tabela
-let tableHead = '', tableRows = '';
-if (viz === 'bar' || viz === 'pie') {
-  tableHead = `<tr><th>Categoria</th><th>Receita</th><th>Qtd</th><th>Notas</th></tr>`;
-  tableRows = table.map(r => `<tr><td>${esc(r.categoria)}</td><td>${fmtBRL(r.receita)}</td><td>${r.qtd||0}</td><td>${r.notas||0}</td></tr>`).join('');
-} else if (viz === 'time_series') {
-  tableHead = `<tr><th>Mês</th><th>Receita</th><th>Qtd</th><th>Notas</th></tr>`;
-  tableRows = table.map(r => `<tr><td>${esc(r.mes)}</td><td>${fmtBRL(r.receita)}</td><td>${r.qtd||0}</td><td>${r.notas||0}</td></tr>`).join('');
-} else if (viz === 'scatter') {
-  tableHead = `<tr><th>Ponto</th><th>${esc(scatter.xKey)}</th><th>${esc(scatter.yKey)}</th></tr>`;
-  tableRows = table.map(r => `<tr><td>${esc(r.ponto ?? '')}</td><td>${r.x}</td><td>${r.y}</td></tr>`).join('');
-} else {
-  const cols = Object.keys(table[0] || {coluna:'valor'});
-  tableHead = `<tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr>`;
-  tableRows = table.map(row => `<tr>${Object.keys(row).map(c=>`<td>${esc(row[c])}</td>`).join('')}</tr>`).join('');
-}
-
-// Chart type
-const chartType = (viz === 'time_series') ? 'line'
-               : (viz === 'bar') ? 'bar'
-               : (viz === 'pie') ? 'pie'
-               : (viz === 'scatter') ? 'scatter' : 'line';
-
-const labels    = series.labels || [];
-const data      = series.data   || [];
-const points    = scatter.points || [];
-const rhoTxt    = (scatter.rho===null || scatter.rho===undefined) ? '' : `Coef. de correlação (ρ): <b>${Number(scatter.rho).toFixed(3)}</b>`;
-const badgeUF   = context.uf_value ? `${context.uf_scope || 'DEST'}: ${context.uf_value}` : `UF: ${ufUsed || 'ALL'}`;
-const badgePer  = `${fmtISO(context.start || dataInicioUsed)} → ${fmtISO(context.end || dataFimUsed)}`;
-
-const html = `
 <!doctype html>
 <html lang="pt-br">
 <head>
   <meta charset="utf-8"/>
-  <title>${esc(label || 'GAIA – Agentes EDA')}</title>
+  <title>GAIA – Agentes EDA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root{
       --gaia-green:#2E7D68;
@@ -89,153 +14,73 @@ const html = `
     *{box-sizing:border-box}
     body{background:#fff;font-family:Poppins,Arial;color:var(--gaia-green);display:flex;justify-content:center;align-items:flex-start;margin:0}
     .container{background:var(--gaia-soft);padding:30px 40px;border-radius:15px;max-width:980px;width:100%;box-shadow:0 4px 15px rgba(0,0,0,.1);margin:24px}
-    h1{margin:0 0 8px;text-transform:capitalize}
-    h2{margin:0 0 6px;font-size:18px}
-    label{font-size:13px;display:block;margin-bottom:4px}
+    h1{margin:0 0 8px}
+    h2{margin:0 0 16px;font-size:18px}
+    label{font-size:13px;display:block;margin-bottom:6px}
     input,select,button{font-family:Poppins,Arial}
     input,select{width:100%;padding:10px 12px;border:1px solid var(--gaia-green);border-radius:8px;color:var(--gaia-green);background:#fff}
-    button{padding:12px 14px;background:var(--gaia-green);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer}
+    button{padding:12px 16px;background:var(--gaia-green);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer}
     .section{background:#fff;padding:16px;border-radius:12px;margin:16px 0}
     .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-    .col{flex:1 1 240px;min-width:220px}
-    .col-narrow{flex:0 0 170px}
-    .kpi{background:#f6faf8;padding:14px 16px;border-radius:12px;margin:10px 0 16px}
-    .kpi b{color:var(--gaia-ink)}
-    .badge{padding:4px 8px;border-radius:8px;background:#e1f2ec;display:inline-block;margin:0 6px 8px 0}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border-bottom:1px solid #eaeaea;text-align:left}
-    .muted{opacity:.8}
-    .rho{margin-top:8px}
-    .hint{font-size:12px;opacity:.8;margin-top:4px}
+    .col{flex:1 1 320px;min-width:260px}
+    .col-narrow{flex:0 0 180px}
+    .hint{font-size:12px;opacity:.8;margin-top:6px}
   </style>
 </head>
 <body>
   <div class="container">
     <h2>GAIA – Agentes EDA</h2>
 
-    <!-- Formulário (produção) -->
+    <!-- FORMULÁRIO INICIAL: envia direto ao webhook -->
     <form method="POST" action="https://n8n-service-to7f.onrender.com/webhook-test/trabalho_final" class="section">
       <div class="row">
         <div class="col">
           <label>Pergunta</label>
-          <input type="text" name="pergunta" placeholder="Ex.: receita mensal, top 10 fornecedores" value="${esc(perguntaUsed)}">
-          <div class="hint">Dicas: “receita mensal”, “top 10 fornecedores por receita”, “ticket médio”, “correlação receita × quantidade”.</div>
+          <input type="text" name="pergunta" placeholder="Ex.: receita mensal, soma total das notas, top 10 fornecedores por receita" />
+          <div class="hint">
+            Exemplos: “receita mensal (2025)”, “ticket médio SP”, “top 10 fornecedores por receita”, “correlação receita × quantidade”.
+          </div>
         </div>
 
         <div class="col-narrow">
           <label>UF</label>
-          <select name="uf">${ufOptions}</select>
+          <select name="uf">
+            <option value="ALL" selected>ALL</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option>
+            <option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option>
+            <option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option>
+            <option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option>
+            <option>SE</option><option>TO</option>
+          </select>
         </div>
 
         <div class="col-narrow">
           <label>Data início (YYYY-MM-DD)</label>
-          <input type="text" name="data_inicio" placeholder="YYYY-MM-DD" value="${esc(dataInicioUsed)}">
+          <input type="text" name="data_inicio" placeholder="YYYY-MM-DD" />
         </div>
+
         <div class="col-narrow">
           <label>Data fim (YYYY-MM-DD)</label>
-          <input type="text" name="data_fim" placeholder="YYYY-MM-DD" value="${esc(dataFimUsed)}">
-        </div>
-
-        <!-- Toggle de análise preditiva -->
-        <div class="col-narrow">
-          <label>Análise preditiva?</label>
-          <select name="predict">
-            <option value="NAO" ${!isPredictUsed ? 'selected' : ''}>Não</option>
-            <option value="SIM" ${isPredictUsed ? 'selected' : ''}>Sim</option>
-          </select>
-        </div>
-
-        <!-- Parâmetros de predição -->
-        <div class="col-narrow">
-          <label>Horizonte (meses)</label>
-          <input type="number" name="forecast_h" min="1" max="12" value="${esc(forecastHUsed)}">
-        </div>
-        <div class="col-narrow">
-          <label>Cenário (%)</label>
-          <input type="number" name="scenario_pct" step="1" value="${esc(scenarioPctUsed)}">
+          <input type="text" name="data_fim" placeholder="YYYY-MM-DD" />
         </div>
 
         <div class="col-narrow">
-          <button type="submit" title="Executar nova consulta">Executar</button>
+          <button type="submit" title="Executar">Executar</button>
         </div>
       </div>
     </form>
 
-    <h1>${esc(label || 'Relatório')}</h1>
-    <div class="badge">${esc(badgePer || '→')}</div>
-    <div class="badge">${esc(badgeUF || `UF: ${ufUsed}`)}</div>
-
-    <div class="kpi">
-      <div>
-        Total: <b>${fmtBRL(kpi.total)}</b>
-         • Itens: <b>${kpi.itens||0}</b>
-         • Notas: <b>${kpi.notas||0}</b>
-         • Ticket Médio: <b>${fmtBRL(kpi.ticket||0)}</b>
-      </div>
-      ${viz==='scatter' && rhoTxt ? `<div class="rho">${rhoTxt}</div>` : ``}
-    </div>
+    <!-- Se quiser deixar um botão de debug opcional, com GET para ver o estado do n8n:
+    <form method="GET" action="https://n8n-service-to7f.onrender.com/webhook/12a2_final" class="section">
+      <button type="submit">Debug</button>
+    </form>
+    -->
 
     <div class="section">
-      <canvas id="c1"></canvas>
-    </div>
-
-    <div class="section">
-      <span class="badge">Insight</span>
-      <p>${esc(insight)}</p>
-    </div>
-
-    <div class="section">
-      <h3>Detalhes</h3>
-      <table>
-        <thead>${tableHead}</thead>
-        <tbody>${tableRows || `<tr><td class="muted" colspan="4">Sem dados para exibir</td></tr>`}</tbody>
-      </table>
+      <h1>Como usar</h1>
+      <p>Preencha a pergunta e, se desejar, o período e a UF. Ao enviar, você receberá o relatório HTML renderizado pelo n8n.</p>
     </div>
   </div>
-
-  <script>
-    (function(){
-      const ctx = document.getElementById('c1');
-      const type   = ${JSON.stringify(chartType)};
-      const labels = ${JSON.stringify(labels)};
-      const data   = ${JSON.stringify(data)};
-      const points = ${JSON.stringify(points)};
-      const xKey   = ${JSON.stringify(scatter.xKey || 'x')};
-      const yKey   = ${JSON.stringify(scatter.yKey || 'y')};
-
-      let config;
-      if (type === 'scatter') {
-        // Chart.js espera {x, y}; já estamos passando no formato certo
-        config = {
-          type: 'scatter',
-          data: { datasets: [{ label: 'Correlação', data: points, pointRadius: 4 }] },
-          options: {
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { title: { display: true, text: xKey } },
-              y: { title: { display: true, text: yKey } }
-            }
-          }
-        };
-      } else if (type === 'pie') {
-        config = {
-          type: 'pie',
-          data: { labels, datasets: [{ data }] },
-          options: { plugins: { legend: { position: 'bottom' } } }
-        };
-      } else {
-        config = {
-          type,
-          data: { labels, datasets: [{ label: 'Receita', data, borderWidth: 2, fill: false }]},
-          options: { plugins: { legend: { display: false } },
-                     scales: { y: { beginAtZero: true } } }
-        };
-      }
-      new Chart(ctx, config);
-    })();
-  </script>
 </body>
 </html>
-`;
-
-return [{ json: { data: html } }];
